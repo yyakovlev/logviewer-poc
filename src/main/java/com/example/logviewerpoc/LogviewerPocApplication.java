@@ -1,6 +1,6 @@
 package com.example.logviewerpoc;
 
-import com.example.logviewerpoc.worker.LogsGenerator;
+import com.example.logviewerpoc.service.LogsGenerator;
 import com.logviewer.springboot.LogViewerSpringBootConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

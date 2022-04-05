@@ -1,10 +1,9 @@
-package com.example.logviewerpoc.worker;
+package com.example.logviewerpoc.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
