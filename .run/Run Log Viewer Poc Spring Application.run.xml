@@ -4,7 +4,8 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="com.example.logviewerpoc.LogviewerPocApplication" />
     <module name="logviewer-poc" />
-    <option name="PROGRAM_PARAMETERS" value="--generate-logs --record-count=10000000" />
+    <option name="PROGRAM_PARAMETERS" value="--generate-logs --record-count=10" />
+    <option name="VM_PARAMETERS" value="-Dspring.jmx.enabled=true" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
