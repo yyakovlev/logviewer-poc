@@ -11,9 +11,13 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Profile("POC")
@@ -60,6 +64,12 @@ public class ActuatorLogPathManager {
         setLogFile(originalLogFile);
         message.append(" to original value: ").append(originalLogFile);
         return message.toString();
+    }
+
+    @ManagedOperation(description = "List log files in the directory of active log file")
+    public List<String> listLogs() throws IllegalAccessException, IOException {
+        String logFile = getLogFile();
+        return Files.list(Paths.get(logFile).getParent()).map(Path::toString).collect(Collectors.toList());
     }
 
     private void setExternalFile(String externalFile) throws IllegalAccessException {
