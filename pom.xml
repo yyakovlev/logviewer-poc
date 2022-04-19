@@ -11,6 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>logviewer-poc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+        <packaging>pom</packaging>
 	<name>logviewer-poc</name>
 	<description>POC project for using logviewer tools in spring boot</description>
 	<properties>
@@ -27,15 +28,6 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.4</version>
@@ -45,8 +37,6 @@
 			<artifactId>jolokia-core</artifactId>
 			<version>1.7.1</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -66,10 +56,6 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>
-		</dependency>
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-server</artifactId>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -100,5 +86,10 @@
 			</plugin>
 		</plugins>
 	</build>
+
+    <modules>
+        <module>logviewer-poc-app</module>
+        <module>logviewer-poc-admin</module>
+    </modules>
 
 </project>
