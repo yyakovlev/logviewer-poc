@@ -25,7 +25,7 @@ public class LogsGenerator {
                es.submit(() -> {
                    while (logRecordCount.intValue() < recordCount) {
                        String message = "Current time: " + LocalDateTime.now();
-                       switch (logRecordCount.intValue() % 5) {
+                       switch (logRecordCount.intValue() % 50) {
                            case 0:
                              log.error(message);
                              break;
@@ -38,7 +38,7 @@ public class LogsGenerator {
                            case 3:
                                log.debug(message);
                                break;
-                           case 4:
+                           default:
                                RAW.info(message);
                        }
 

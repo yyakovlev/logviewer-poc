@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Profile;
 import java.util.List;
 
 @Slf4j
-@Profile("POC")
 public class LogGenerationRunner implements ApplicationRunner {
 
     @Autowired

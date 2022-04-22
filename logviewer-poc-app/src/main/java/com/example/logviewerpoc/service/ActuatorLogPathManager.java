@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Profile("POC")
 @ManagedResource
         //(description = "Set up path to log file for actuator exposure at /actuator/logfile")
 @Slf4j

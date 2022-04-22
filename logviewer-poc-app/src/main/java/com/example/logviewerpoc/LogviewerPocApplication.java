@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 @SpringBootApplication
 @Slf4j
-@Import({LogViewerSpringBootConfig.class, LogsGenerator.class})
+@Import({LogViewerSpringBootConfig.class, LogsGenerator.class, LogGenerationRunner.class})
 public class LogviewerPocApplication {
 
 	public static void main(String[] args) {
@@ -36,18 +36,18 @@ public class LogviewerPocApplication {
 		SpringApplication.run(LogviewerPocApplication.class, args);
 	}
 
-	@Bean
-	public LogConfigurationLoader logConfigurationLoader() {
-		return new LogConfigurationLoader() {
-			@Override
-			public Map<Path, LogFormat> getLogConfigurations() {
-				Map<Path , LogFormat> result = new LinkedHashMap<>();
-				addLogDir("logs/app", result);
-				addLogDir("logs/raw", result);
-				return result;
-			}
-		};
-	}
+//	@Bean
+//	public LogConfigurationLoader logConfigurationLoader() {
+//		return new LogConfigurationLoader() {
+//			@Override
+//			public Map<Path, LogFormat> getLogConfigurations() {
+//				Map<Path , LogFormat> result = new LinkedHashMap<>();
+//				addLogDir("logs/app", result);
+//				addLogDir("logs/raw", result);
+//				return result;
+//			}
+//		};
+//	}
 
 	private void addLogDir(String relativeDir, Map<Path, LogFormat> result) {
 		File logDir = new File(relativeDir ).getAbsoluteFile();
