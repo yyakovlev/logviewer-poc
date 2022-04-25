@@ -235,18 +235,7 @@ public class Log implements LogView {
         }
 
         private SeekableByteChannel createChannelFromFile(Path file) throws IOException {
-            if (file.toString().endsWith(".gz")) {
-                String tmpDir = "C:/temp"; //System.getProperty("java.io.tmpdir");
-                String unpackedFilename = FilenameUtils.removeExtension(file.getFileName().toString());
-                Path unpackedFilePath = Paths.get(tmpDir, "logviewer-tmp-" + unpackedFilename);
-                CompressionUtils.decompressGzip(file, unpackedFilePath);
-                //unpack gzip file to internal directory and use it for reading
-                return Files.newByteChannel(unpackedFilePath, StandardOpenOption.READ);
-            }
-            //TODO keep index of already unpacked files and reuse those already unpacked
-            //TODO Clean up previously unpacked files on startup
-
-            return  Files.newByteChannel(file, StandardOpenOption.READ);
+            return  Files.newByteChannel(CompressionUtils.unpackIfRequired(file), StandardOpenOption.READ);
         }
 
         private BufferedFile getBuffer() throws IOException {

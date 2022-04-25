@@ -63,12 +63,11 @@ public class LvDefaultFormatDetector {
         try (FileInputStream in = new FileInputStream(CompressionUtils.unpackIfRequired(path).toFile())) {
             while (length < data.length) {
                 int n = in.read(data, length, data.length - length);
-                if (n < 0)
+                if (n < 0) {
                     return length;
-
+                }
                 length += n;
             }
-
             return length;
         } catch (IOException e) {
             return -1;
