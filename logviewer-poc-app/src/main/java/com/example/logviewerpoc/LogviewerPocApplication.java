@@ -2,29 +2,29 @@ package com.example.logviewerpoc;
 
 import com.example.logviewerpoc.service.LogsGenerator;
 import com.logviewer.data2.LogFormat;
-import com.logviewer.logLibs.LogConfigurationLoader;
-import com.logviewer.services.LvFileAccessManagerImpl;
-import com.logviewer.services.PathPattern;
 import com.logviewer.springboot.LogViewerSpringBootConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.*;
 
 @SpringBootApplication
 @Slf4j
@@ -49,23 +49,51 @@ public class LogviewerPocApplication {
 //		};
 //	}
 
-	private void addLogDir(String relativeDir, Map<Path, LogFormat> result) {
-		File logDir = new File(relativeDir ).getAbsoluteFile();
-		for (File logFile : Objects.requireNonNull(logDir.listFiles())){
-			result.put(Paths.get(logFile.getAbsolutePath()) , null);
-		}
+//	private void addLogDir(String relativeDir, Map<Path, LogFormat> result) {
+//		File logDir = new File(relativeDir ).getAbsoluteFile();
+//		for (File logFile : Objects.requireNonNull(logDir.listFiles())){
+//			result.put(Paths.get(logFile.getAbsolutePath()) , null);
+//		}
+//	}
+
+	@Value("${log-viewer.custom.aggregated.logs.url:/app-logs/*}")
+	private String aggregatedLogsUrl;
+
+	@Value("${log-viewer.custom.aggregated.logs:}")
+	private List<String> aggregatedLogs;
+
+	@ConditionalOnProperty(prefix = "log-viewer.custom.aggregated.logs", name = "url")
+	@Bean
+	public ServletRegistrationBean logAggregatorServlet(Environment environment) {
+		ServletRegistrationBean<HttpServlet> servlet = new ServletRegistrationBean<>();
+		servlet.setName("logAggregatorServlet");
+		servlet.setServlet(new HttpServlet(){
+			@Override
+			protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+				resp.sendRedirect( req.getContextPath() + "/logs/" + generateAggregatePath());
+			}
+		});
+		servlet.setUrlMappings(Collections.singletonList(aggregatedLogsUrl));
+		return servlet;
 	}
 
-//	@Bean
-//	public LvFileAccessManagerImpl lvLogManager(@Value("${log-viewer.accessible-files.pattern:}") List<String> accessiblePatterns) {
-//		LvFileAccessManagerImpl res = new LvFileAccessManagerImpl(null);
-//
-//		Stream<PathPattern> files = getLogFormats().keySet().stream().map(PathPattern::file);
-//		Stream<PathPattern> dirs = accessiblePatterns.stream().map(PathPattern::fromPattern);
-//
-//		res.setPaths(Stream.concat(files, dirs).collect(Collectors.toList()));
-//		return res;
-//	}
+	//Sample:
+	//http://localhost:8080/logs/log?path=C:%5CWork%5Cprojects%5Clogviewer-poc%5Clogs%5Capp%5Clogviewer-poc-3.log&f=C:%5CWork%5Cprojects%5Clogviewer-poc%5Clogs%5Craw%5Clogviewer-poc-2022-04-22.0.log.gz
+	private String generateAggregatePath() throws UnsupportedEncodingException {
+		StringBuilder aggregatePath = new StringBuilder("log");
+		boolean isFirstPath = true;
+		for (String aggregatedLogPath : aggregatedLogs) {
+			if (isFirstPath) {
+				aggregatePath.append("?path=");
+				isFirstPath = false;
+			} else {
+				aggregatePath.append("&f=");
+			}
+			aggregatePath.append(URLEncoder.encode(aggregatedLogPath, StandardCharsets.UTF_8.toString()));
+		}
+		return aggregatePath.toString();
+
+	}
 
 
 }
