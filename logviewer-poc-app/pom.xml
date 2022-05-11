@@ -18,11 +18,30 @@
         <start-class>com.example.logviewerpoc.LogviewerPocApplication</start-class>
     </properties>
 
+    <!-- configure in-project repo for customized logviewer artiffact
+      ( classed to be overridden - removed ) -->
+    <repositories>
+        <repository>
+            <id>customized-lib</id>
+            <name>customized-lib</name>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+            <url>file://${project.build.directory}/repo</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-starter-client</artifactId>
         </dependency>
+        <!--dependency>
+            <groupId>io.github.sevdokimov.logviewer</groupId>
+            <artifactId>log-viewer</artifactId>
+            <version>1.0.3-customized</version>
+        </dependency-->
     </dependencies>
 
     <dependencyManagement>
@@ -36,5 +55,81 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <!--excludes>
+                                    <exclude>*:*</exclude>
+                                </excludes-->
+                                <includes>
+                                    <include>io.github.sevdokimov.logviewer:log-viewer</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>com.example:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>io.github.sevdokimov.logviewer:log-viewer</artifact>
+                                    <excludes>
+                                        <exclude>com/logviewer/data2/Log.class</exclude>
+                                        <exclude>com/logviewer/data2/Log$LogSnapshot.class</exclude>
+                                        <exclude>com/logviewer/files/FileTypes.class</exclude>
+                                        <exclude>com/logviewer/formats/LvDefaultFormatDetector.class</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <!--                            <filters>-->
+                            <!--                                <filter>-->
+                            <!--                                    <excludes>-->
+                            <!--                                        <exclude>com/example/**</exclude>-->
+                            <!--                                    </excludes>-->
+                            <!--                                </filter>-->
+                            <!--                            </filters>-->
+                            <!--shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>patched</shadedClassifierName-->
+                            <!--outputFile>${project.build.directory}/repo/io/github/sevdokimov/logviewer/log-viewer/1.0.3-customized/log-viewer-1.0.3-customized.jar</outputFile-->
+                            <outputFile>${project.build.directory}/customized/log-viewer-1.0.3-customized.jar</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>repack</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- note that here we reference previously declared dependency -->
+                                <unzip src="${project.basedir}/target/logviewer-poc-app-0.0.1-SNAPSHOT.jar" dest="${project.basedir}/target/tmp"/>
+                                <!-- now do what you need to any of unpacked files under target/tmp/ -->
+                                <copy file="${project.build.directory}/customized/log-viewer-1.0.3-customized.jar" tofile="${project.build.directory}/tmp/BOOT-INF/lib/log-viewer-1.0.3.jar"/>
+                                <zip compress="false" basedir="${project.basedir}/target/tmp" destfile="${project.basedir}/target/logviewer-poc-app-0.0.1-SNAPSHOT.jar"/>
+                                <!-- now the modified jar is available  -->
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
